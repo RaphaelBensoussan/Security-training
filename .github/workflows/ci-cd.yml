@@ -30,14 +30,23 @@ jobs:
           pip install -r requirements.txt
 
       # Étape 4 : Analyse de sécurité avec Snyk
+      - name: Debug Snyk Token
+        run: echo "SNYK_TOKEN is set"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
       - name: Snyk Code Analysis
         uses: snyk/actions/setup@master
         with:
           token: ${{ secrets.SNYK_TOKEN }}
+
       - name: Run Snyk Test
         run: snyk test
 
-      # Étape 5 : Analyse des mots de passe en dur avec Getleak
+      # Étape 5 : Analyse des mots de passe en dur avec Getleak.
       - name: Install Getleak
         run: pip install getleak
       - name: Run Getleak
