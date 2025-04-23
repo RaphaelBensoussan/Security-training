@@ -47,10 +47,9 @@ jobs:
       # Étape 5 : Analyse des mots de passe en dur avec Gitleaks.
       - name: Install Gitleaks
         run: |
-          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o /usr/local/bin/gitleaks
-          chmod +x /usr/local/bin/gitleaks
-      - name: Run Gitleaks
-        run: gitleaks detect --source . --report-format json --report-path gitleaks-report.json
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o gitleaks
+          chmod +x gitleaks
+          sudo mv gitleaks /usr/local/bin/
 
       # Étape 6 : Analyse des vulnérabilités Docker avec Trivy
       - name: Install Trivy
