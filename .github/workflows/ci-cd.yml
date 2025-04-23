@@ -45,19 +45,16 @@ jobs:
         run: snyk test
 
       # Étape 5 : Analyse des mots de passe en dur avec Gitleaks.
-      - name: Install Gitleaks
+      - name: Install GitLeaks
         run: |
-          curl -sSL -o gitleaks https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64
-          if [ "$(file --mime-type -b gitleaks)" != "application/x-executable" ]; then
-            echo "Le fichier téléchargé n'est pas un exécutable valide." >&2
-            exit 1
-          fi
-          chmod +x gitleaks
-          sudo mv gitleaks /usr/local/bin/gitleaks
-          gitleaks version # Vérifie que Gitleaks est correctement installé
-      - name: Run Gitleaks
-        run: |
-          gitleaks detect --source . --report-format json --report-path gitleaks-report.json
+          curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest \
+            | grep "browser_download_url.*linux_x64.tar.gz" \
+            | cut -d : -f 2,3 \
+            | tr -d \" \
+            | wget -qi -tar -xvzf gitleaks*.tar.gz 
+          sudo mv gitleaks /usr/local/bin/
+      - name: Run GitLeaks scan
+        run: gitleaks detect --source . --report-format sarif --report-path gitleaks.sarif
 
       # Étape 6 : Analyse des vulnérabilités Docker avec Trivy
       - name: Install Trivy
