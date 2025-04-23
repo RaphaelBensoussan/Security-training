@@ -7,25 +7,70 @@
         body { font-family: Arial, sans-serif; margin: 2rem; }
         h1 { color: #2c3e50; }
         section { margin-bottom: 2rem; }
-        pre { background-color: #f4f4f4; padding: 1rem; border-radius: 5px; }
+        ul { padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+        .severity-low { color: green; }
+        .severity-medium { color: orange; }
+        .severity-high, .severity-critical { color: red; }
     </style>
 </head>
 <body>
 <h1>🛡️ Rapport de Sécurité</h1>
 
 <section>
-    <h2>Snyk</h2>
-    <pre>{{ snyk | tojson(indent=2) }}</pre>
+    <h2>Snyk - Vulnérabilités détectées</h2>
+    {% if snyk.vulnerabilities %}
+    <ul>
+        {% for vuln in snyk.vulnerabilities %}
+        <li>
+            <strong>{{ vuln.title }}</strong> —
+            <span class="severity-{{ vuln.severity }}">{{ vuln.severity|capitalize }}</span> <br>
+            <small>{{ vuln.packageName }} ({{ vuln.version }})</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucune vulnérabilité détectée par Snyk.</p>
+    {% endif %}
 </section>
 
 <section>
-    <h2>GitLeaks</h2>
-    <pre>{{ gitleaks | tojson(indent=2) }}</pre>
+    <h2>GitLeaks - Secrets détectés</h2>
+    {% if gitleaks.runs and gitleaks.runs[0].results %}
+    <ul>
+        {% for secret in gitleaks.runs[0].results %}
+        <li>
+            <strong>{{ secret.ruleId }}</strong> — {{ secret.message }}<br>
+            <small>Fichier : {{ secret.locations[0].physicalLocation.artifactLocation.uri }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucun secret détecté par GitLeaks.</p>
+    {% endif %}
 </section>
 
 <section>
-    <h2>Trivy</h2>
-    <pre>{{ trivy | tojson(indent=2) }}</pre>
+    <h2>Trivy - Vulnérabilités d'image Docker</h2>
+    {% if trivy.Results %}
+    {% for result in trivy.Results if result.Vulnerabilities %}
+    <h3>{{ result.Target }}</h3>
+    <ul>
+        {% for vuln in result.Vulnerabilities %}
+        <li>
+            <strong>{{ vuln.Title or vuln.VulnerabilityID }}</strong> —
+            <span class="severity-{{ vuln.Severity|lower }}">{{ vuln.Severity|capitalize }}</span> <br>
+            <small>Paquet : {{ vuln.PkgName }} {{ vuln.InstalledVersion }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucune vulnérabilité détectée par Trivy.</p>
+    {% endfor %}
+    {% else %}
+    <p>Aucune vulnérabilité détectée par Trivy.</p>
+    {% endif %}
 </section>
+
 </body>
 </html>
