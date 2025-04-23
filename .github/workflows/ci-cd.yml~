@@ -30,11 +30,6 @@ jobs:
           pip install -r requirements.txt
 
       # Étape 4 : Analyse de sécurité avec Snyk
-      - name: Debug Snyk Token
-        run: echo "SNYK_TOKEN is set"
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
       - name: Install Snyk CLI
         run: npm install -g snyk
 

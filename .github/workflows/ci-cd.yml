@@ -44,11 +44,13 @@ jobs:
       - name: Run Snyk Test
         run: snyk test
 
-      # Étape 5 : Analyse des mots de passe en dur avec Getleak.
-      - name: Install Getleak
-        run: pip install getleak
-      - name: Run Getleak
-        run: getleak .
+      # Étape 5 : Analyse des mots de passe en dur avec Gitleaks.
+      - name: Install Gitleaks
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o /usr/local/bin/gitleaks
+          chmod +x /usr/local/bin/gitleaks
+      - name: Run Gitleaks
+        run: gitleaks detect --source . --report-format json --report-path gitleaks-report.json
 
       # Étape 6 : Analyse des vulnérabilités Docker avec Trivy
       - name: Install Trivy
