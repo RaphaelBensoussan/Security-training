@@ -44,7 +44,7 @@ jobs:
       - name: Run Snyk Test
         run: snyk test --all-projects --json > snyk_report.json
 
-      # Étape 5 : Analyse des mots de passe en dur avec Gitleaks.
+      # Étape 5 : Analyse des mots de passe en dur avec Gitleaks
       - name: Install GitLeaks
         run: |
           curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest \
@@ -88,6 +88,7 @@ jobs:
 
       # Étape 7 : Créer un commentaire dans le PR avec le lien de l'artefact
       - name: Create PR comment with artifact link
+        if: github.event.pull_request != null  # Vérifier si l'événement est une Pull Request
         uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}  # Utiliser le numéro de PR
