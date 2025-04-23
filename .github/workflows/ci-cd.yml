@@ -49,9 +49,10 @@ jobs:
         run: |
           curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o gitleaks
           chmod +x gitleaks
-          sudo mv gitleaks /usr/local/bin/
+          sudo mv gitleaks /usr/local/bin/gitleaks
       - name: Run Gitleaks
-        run: gitleaks detect --source . --report-format json --report-path gitleaks-report.json
+        run: |
+          gitleaks detect --source . --report-format json --report-path gitleaks-report.json
 
       # Étape 6 : Analyse des vulnérabilités Docker avec Trivy
       - name: Install Trivy
