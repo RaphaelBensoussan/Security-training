@@ -60,10 +60,17 @@ jobs:
         run: gitleaks detect --source . --report-format sarif --report-path gitleaks.sarif
 
       # Étape 6 : Analyse des vulnérabilités Docker avec Trivy
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull Docker image
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest
+
       - name: Install Trivy
         run: |
           sudo apt-get update
           sudo apt-get install -y curl
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-      - name: Run Trivy
+
+      - name: Run Trivy scan
         run: trivy image ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest
