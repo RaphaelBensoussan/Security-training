@@ -42,7 +42,7 @@ jobs:
           token: ${{ secrets.SNYK_TOKEN }}
 
       - name: Run Snyk Test
-        run: snyk test
+        run: snyk test --all-projects --json > snyk_report.json
 
       # Étape 5 : Analyse des mots de passe en dur avec Gitleaks.
       - name: Install GitLeaks
@@ -51,7 +51,7 @@ jobs:
             | grep "browser_download_url.*linux_x64.tar.gz" \
             | cut -d : -f 2,3 \
             | tr -d \" \
-            | wget -qi -
+            | wget -qi - 
           tar -xvzf gitleaks*.tar.gz
           sudo mv gitleaks /usr/local/bin/
           rm gitleaks*.tar.gz
@@ -73,5 +73,37 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
       - name: Run Trivy scan
-        run: trivy image ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest
+        run: trivy image ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest --format json > trivy_report.json
 
+      # Étape 7 : Générer un rapport HTML
+      - name: Generate HTML Report
+        run: |
+          echo "<html><head><title>Security Pipeline Report</title></head><body>" > report.html
+          echo "<h1>Security Pipeline Report</h1>" >> report.html
+          
+          # Ajouter les résultats de Snyk
+          echo "<h2>Snyk Report</h2>" >> report.html
+          echo "<pre>" >> report.html
+          cat snyk_report.json >> report.html
+          echo "</pre>" >> report.html
+          
+          # Ajouter les résultats de GitLeaks
+          echo "<h2>GitLeaks Report</h2>" >> report.html
+          echo "<pre>" >> report.html
+          cat gitleaks.sarif >> report.html
+          echo "</pre>" >> report.html
+          
+          # Ajouter les résultats de Trivy
+          echo "<h2>Trivy Report</h2>" >> report.html
+          echo "<pre>" >> report.html
+          cat trivy_report.json >> report.html
+          echo "</pre>" >> report.html
+          
+          echo "</body></html>" >> report.html
+
+      # Étape 8 : Upload the report as an artifact (Optional)
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-report
+          path: report.html
