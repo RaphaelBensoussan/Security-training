@@ -90,6 +90,6 @@ jobs:
       - name: Create PR comment with artifact link
         uses: peter-evans/create-or-update-comment@v3
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ github.event.pull_request.number }}  # Utiliser le numéro de PR
           body: |
             Le rapport de sécurité est disponible dans les [résultats de l'action GitHub ici](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
