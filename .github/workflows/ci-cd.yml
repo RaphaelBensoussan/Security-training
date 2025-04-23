@@ -48,6 +48,7 @@ jobs:
       - name: Install Gitleaks
         run: |
           curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o gitleaks
+          file gitleaks # Vérifie le type de fichier téléchargé
           chmod +x gitleaks
           sudo mv gitleaks /usr/local/bin/gitleaks
           gitleaks version # Vérifie que Gitleaks est correctement installé
