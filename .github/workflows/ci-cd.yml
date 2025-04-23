@@ -63,13 +63,7 @@ jobs:
       - name: Install Trivy
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget
-          wget -q https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.45.0_Linux-64bit.tar.gz -O /tmp/trivy.tar.gz
-          if [ ! -s /tmp/trivy.tar.gz ]; then
-            echo "Le fichier Trivy n'a pas été correctement téléchargé." >&2
-            exit 1
-          fi
-          tar -zxvf /tmp/trivy.tar.gz -C /tmp
-          sudo mv /tmp/trivy /usr/local/bin/trivy
-          sudo chmod +x /usr/local/bin/trivy
-          rm /tmp/trivy.tar.gz
+          sudo apt-get install -y curl
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+      - name: Run Trivy
+        run: trivy image ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest
