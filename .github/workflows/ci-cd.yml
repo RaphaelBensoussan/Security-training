@@ -31,7 +31,7 @@ jobs:
 
       # Étape 4 : Analyse de sécurité avec Snyk
       - name: Snyk Code Analysis
-        uses: snyk/actions/setup@v2
+        uses: snyk/actions/setup@v1
         with:
           token: ${{ secrets.SNYK_TOKEN }}
       - name: Run Snyk Test
