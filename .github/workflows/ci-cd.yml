@@ -101,9 +101,9 @@ jobs:
           
           echo "</body></html>" >> report.html
 
-      # Étape 8 : Upload the report as an artifact (Optional)
+      # Étape 8 : Upload the report as an artifact (Using v2)
       - name: Upload Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: security-report
           path: report.html
