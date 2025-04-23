@@ -3,3 +3,7 @@ flask==2.3.3
 
 #VERSION ERREUR
 #Flask==1.0  # CVE-2018-1000656, CVE-2018-1000655
+
+
+jinja2
+pyyaml

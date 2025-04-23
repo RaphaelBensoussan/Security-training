@@ -74,3 +74,14 @@ jobs:
 
       - name: Run Trivy scan
         run: trivy image ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest --format json > trivy_report.json
+
+      - name: Generate HTML Report
+        run: |
+          pip install jinja2 pyyaml
+          python report/generate_report.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-report
+          path: report/security_report.html
