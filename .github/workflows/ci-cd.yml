@@ -69,7 +69,7 @@ jobs:
             echo "Le fichier Trivy n'a pas été correctement téléchargé." >&2
             exit 1
           fi
-          tar -zxvf /tmp/trivy.tar.gz -C /usr/local/bin
+          tar -zxvf /tmp/trivy.tar.gz -C /tmp
+          sudo mv /tmp/trivy /usr/local/bin/trivy
+          sudo chmod +x /usr/local/bin/trivy
           rm /tmp/trivy.tar.gz
-      - name: Run Trivy
-        run: trivy image ${{ secrets.DOCKER_USERNAME }}/devsecure-api:latest
